@@ -1,0 +1,45 @@
+* {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: #1e1e1e;
+}
+
+.wrapper {
+    display: flex;
+}
+
+h2 {
+    color: white;
+    font-size: large;
+}
+
+.editorWrapper {
+    width: 60%;
+}
+
+.editorContainer {
+    border: 1px #3f3f3f solid;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.outputWrapper {
+    width: 35%;
+    margin-left: 20px;
+}
+
+.visualizerContainer {
+    height: 42.8vh;
+    border: 1px #3f3f3f solid;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.consoleContainer {
+    height: 30vh;
+    border: 1px #3f3f3f solid;
+    border-radius: 5px;
+    padding: 2px;
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pynode 2.0</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="editorWrapper">
+            <h2>Editor</h2>
+            <div class="editorContainer">
+                <div id="editor" style="height: 80vh; width: 100%;"></div>
+            </div>
+        </div>
+        <div class="outputWrapper">
+            <h2>Visualizer</h2>
+            <div class="visualizerContainer">
+                <div id="editor" style="height: 80vh;"></div>
+            </div>
+            <h2>Output</h2>
+            <div class="consoleContainer">
+                <div id="editor" style="height: 80vh;"></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
+    <script>
+        let editor;
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs' }});
+        require(["vs/editor/editor.main"], () => {
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                language: 'python',
+                theme: 'vs-dark',
+                automaticLayout: true
+            });
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                
+                saveCode();
+            }
+        });
+
+        function saveCode() {
+            var text = editor.getValue();
+            var blob = new Blob([text], {type: "text/plain;charset=utf-8;"});
+            var name = prompt("Enter file name", "project");
+            if (name != null){
+                saveAs(blob, name + ".pynode");
+                return;
+            }
+            saveAs(blob, "project.pynode"); 
+        }
+    </script>
+    
+</body>
+</html>
