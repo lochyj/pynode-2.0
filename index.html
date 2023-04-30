@@ -18,16 +18,24 @@
         <div class="outputWrapper">
             <h2>Visualizer</h2>
             <div class="visualizerContainer">
-                <div id="editor" style="height: 80vh;"></div>
+                <div id="visualizer" style="height: 80vh;"></div>
             </div>
-            <h2>Output</h2>
+            <h2>Output</h2> <button id="run">Run</button>
             <div class="consoleContainer">
-                <div id="editor" style="height: 80vh;"></div>
+                <div id="console" style="height: 80vh;"></div>
             </div>
         </div>
     </div>
+    <div id="codeTemp" style="display: none;"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
+    <script src="external/fileSaver.min.js"></script>
+    <script src="editor/sleep.js"></script>
+    <script async defer src="external/brython.min.js"></script>
+    <script async defer src="external/brython_stdlib.min.js"></script>
+    <script async src="external/pixi.js"></script>
+    <script src="renderer/renderer.js"></script>
     <script>
+        var temp = document.getElementById("codeTemp");
         let editor;
         require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs' }});
         require(["vs/editor/editor.main"], () => {
@@ -54,9 +62,64 @@
                 saveAs(blob, name + ".pynode");
                 return;
             }
-            saveAs(blob, "project.pynode"); 
         }
+
+        function getCode() {
+            sleep(10).then(() => {
+                return editor.getValue();
+            });
+        }
+
+        window.getCode = getCode
+
+        function loadCode(code) {
+            // The sleep is here to ensure that the editor variable has been resolved and doesn't throw errors.
+            // Its only 10ms so it shouldn't cause performance issues.
+            sleep(10).then(() => {
+                editor.setValue(code);
+            });
+        }
+
+        function run_python(src) {
+            temp.innerText = src;
+            brython({debug:2, ids: ["codeTemp"]})
+        }
+
+        function runCode() {
+            console.log(editor.getValue())
+            run_python(editor.getValue());
+        }
+
+        // Ensure that brython is loaded before running any code
+        sleep(150).then(() => {
+            brython(1)
+        });
+        
+        // TODO: add loading from local storage
+        loadCode("print('Hello!')")
+
+        
     </script>
+    <script type="text/python">
+    import pynode
+    from exec import *
+    from browser import document, window
+    import sys
     
+    # Redirect stdout to the custom console
+    class CustomStdout:
+        def write(self, txt):
+            document['console'].html += f'<li>{txt}</li>'
+
+    sys.stdout = CustomStdout()
+
+    print("Brython successfully loaded!")
+
+    def runCode(ev):
+        document['console'].value = ''
+        run(window.getCode)
+
+    document['run'].bind('click', runCode)
+    </script>
 </body>
 </html>
