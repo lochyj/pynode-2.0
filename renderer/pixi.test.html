@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixi.js test</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div id="canvas" style="border: 1px solid white;"></div>
+    <script src="../external/pixi.js"></script>
+    <script>
+        var nodes = {
+            "node1": {
+                "name": "john"
+            },
+            "node2": {
+                "name": "maria"
+            },
+            "node3": {
+                "name": "smith"
+            }
+        }
+
+        var connections = {
+            "connection1": ["node1", "node2", 10]
+        }
+    </script>
+    <script>
+        // #1e1e1e
+        const app = new PIXI.Application({ background: '#1e1e1e'});
+        document.getElementById("canvas").appendChild(app.view);
+        const container = new PIXI.Container();
+        app.stage.addChild(container);
+
+        const graphics = new PIXI.Graphics();
+
+        graphics.lineStyle(1, 0xFFFFFF, 1);
+        graphics.beginFill(0x000000, 1);
+        graphics.drawCircle(250, 250, 50);
+        graphics.endFill();
+
+        app.stage.addChild(graphics)
+
+    </script>
+</body>
+</html>

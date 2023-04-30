@@ -9,6 +9,13 @@
 </head>
 <body>
     <div class="wrapper">
+        <div class="sideBar">
+            <h2>File</h2>
+            <button id="save" onclick="saveCode()">Save</button>
+            <button id="load">Load</button>
+            <h2>Code</h2>
+            <button id="run">run</button>
+        </div>
         <div class="editorWrapper">
             <h2>Editor</h2>
             <div class="editorContainer">
@@ -18,11 +25,11 @@
         <div class="outputWrapper">
             <h2>Visualizer</h2>
             <div class="visualizerContainer">
-                <div id="visualizer" style="height: 80vh;"></div>
+                <div id="output" style="height: 100%;"></div>
             </div>
-            <h2>Output</h2> <button id="run">Run</button>
+            <h2>Output</h2>
             <div class="consoleContainer">
-                <div id="console" style="height: 80vh;"></div>
+                <div id="console" style="height: 100%;"></div>
             </div>
         </div>
     </div>
@@ -30,15 +37,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs/loader.min.js"></script>
     <script src="external/fileSaver.min.js"></script>
     <script src="editor/sleep.js"></script>
-    <script async defer src="external/brython.min.js"></script>
-    <script async defer src="external/brython_stdlib.min.js"></script>
-    <script async src="external/pixi.js"></script>
+    <script src="external/brython.min.js"></script>
+    <script src="external/brython_stdlib.min.js"></script>
+    <script src="external/pixi.js"></script>
     <script src="renderer/renderer.js"></script>
+    <script src="editor/themes.js"></script>
     <script>
         var temp = document.getElementById("codeTemp");
         let editor;
         require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs' }});
         require(["vs/editor/editor.main"], () => {
+            monaco.editor.defineTheme('GithubDark', Theme_GithubDark);
+
             editor = monaco.editor.create(document.getElementById('editor'), {
                 language: 'python',
                 theme: 'vs-dark',
@@ -65,9 +75,7 @@
         }
 
         function getCode() {
-            sleep(10).then(() => {
-                return editor.getValue();
-            });
+            return editor.getValue();
         }
 
         window.getCode = getCode
@@ -75,19 +83,9 @@
         function loadCode(code) {
             // The sleep is here to ensure that the editor variable has been resolved and doesn't throw errors.
             // Its only 10ms so it shouldn't cause performance issues.
-            sleep(10).then(() => {
+            sleep(50).then(() => {
                 editor.setValue(code);
             });
-        }
-
-        function run_python(src) {
-            temp.innerText = src;
-            brython({debug:2, ids: ["codeTemp"]})
-        }
-
-        function runCode() {
-            console.log(editor.getValue())
-            run_python(editor.getValue());
         }
 
         // Ensure that brython is loaded before running any code
@@ -96,7 +94,9 @@
         });
         
         // TODO: add loading from local storage
-        loadCode("print('Hello!')")
+        sleep(150).then(() => {
+            loadCode("print('Hello!')")
+        });
 
         
     </script>
@@ -116,8 +116,8 @@
     print("Brython successfully loaded!")
 
     def runCode(ev):
-        document['console'].value = ''
-        run(window.getCode)
+        print(window.getCode())
+        run(window.getCode())
 
     document['run'].bind('click', runCode)
     </script>
